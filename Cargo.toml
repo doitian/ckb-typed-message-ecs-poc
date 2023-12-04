@@ -1,5 +1,5 @@
 [workspace]
-members = ["contracts/ckb-typed-message-ecs-poc"]
+members = ["contracts/component-lock"]
 exclude = ["tests"]
 
 [profile.release]

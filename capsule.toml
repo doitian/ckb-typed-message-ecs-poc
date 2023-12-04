@@ -9,5 +9,5 @@ version = "0.10.2"
 deployment = "deployment.toml"
 
 [[contracts]]
-name = "ckb-typed-message-ecs-poc"
+name = "component-lock"
 template_type = "Rust"

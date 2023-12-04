@@ -1,5 +1,5 @@
 [package]
-name = "ckb-typed-message-ecs-poc"
+name = "component-lock"
 version = "0.1.0"
 edition = "2021"
 
