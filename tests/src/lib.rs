@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 #[cfg(test)]
-mod tests;
+mod component_lock_tests;
 
 const TEST_ENV_VAR: &str = "CAPSULE_TEST_ENV";
 
@@ -44,7 +44,7 @@ impl Loader {
             TestEnv::Debug => "debug",
             TestEnv::Release => "release",
         };
-        let dir = env::current_dir().unwrap();
+        env::current_dir().unwrap();
         let mut base_path = PathBuf::new();
         // cargo may use a different cwd when running tests, for example:
         // when running debug in vscode, it will use workspace root as cwd by default,
