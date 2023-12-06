@@ -15,3 +15,7 @@ template_type = "Rust"
 [[contracts]]
 name = "always-success"
 template_type = "Rust"
+
+[[contracts]]
+name = "component-definition-type"
+template_type = "Rust"

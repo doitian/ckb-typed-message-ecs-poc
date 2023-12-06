@@ -1,5 +1,5 @@
 [workspace]
-members = ["contracts/component-lock", "contracts/always-success"]
+members = ["contracts/component-lock", "contracts/always-success", "contracts/component-definition-type"]
 exclude = ["tests"]
 
 [profile.release]
