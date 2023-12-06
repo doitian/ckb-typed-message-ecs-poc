@@ -1,9 +1,12 @@
+use blake2b_rs::{Blake2b, Blake2bBuilder};
 use ckb_testtool::ckb_types::bytes::Bytes;
 use std::env;
 use std::fs;
 use std::path::PathBuf;
 use std::str::FromStr;
 
+#[cfg(test)]
+mod component_definition_type_tests;
 #[cfg(test)]
 mod component_lock_tests;
 
@@ -65,4 +68,11 @@ impl Loader {
         path.push(name);
         fs::read(path).expect("binary").into()
     }
+}
+
+pub const CKB_PERSONALIZATION: &[u8] = b"ckb-default-hash";
+pub fn new_blake2b() -> Blake2b {
+    Blake2bBuilder::new(32)
+        .personal(CKB_PERSONALIZATION)
+        .build()
 }

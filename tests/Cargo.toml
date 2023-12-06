@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 ckb-testtool = "0.10"
 serde_json = "1.0.108"
+blake2b-rs = "0.2.0"

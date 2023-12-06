@@ -1175,6 +1175,7 @@ dependencies = [
 name = "tests"
 version = "0.1.0"
 dependencies = [
+ "blake2b-rs",
  "ckb-testtool",
  "serde_json",
 ]
