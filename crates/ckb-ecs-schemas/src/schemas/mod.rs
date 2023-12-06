@@ -16,7 +16,7 @@ fn build_component_definition() {
     let definition_v1 = ComponentDefinitionV1Builder::default()
         .component_name("test".into())
         .info_hash([42u8; 32].into())
-        .predicate(script)
+        .delegate(script)
         .build();
     let definition = ComponentDefinitionBuilder::default()
         .set(definition_v1)
@@ -28,7 +28,7 @@ fn build_component_definition() {
     match reader.to_enum() {
         ComponentDefinitionUnionReader::ComponentDefinitionV1(reader) => {
             assert_eq!(reader.component_name().raw_data(), "test".as_bytes());
-            assert_eq!(reader.predicate().hash_type().as_slice(), &[1u8]);
+            assert_eq!(reader.delegate().hash_type().as_slice(), &[1u8]);
         }
     }
 }

@@ -266,7 +266,7 @@ impl ::core::fmt::Display for ComponentDefinitionV1 {
         write!(f, "{} {{ ", Self::NAME)?;
         write!(f, "{}: {}", "component_name", self.component_name())?;
         write!(f, ", {}: {}", "info_hash", self.info_hash())?;
-        write!(f, ", {}: {}", "predicate", self.predicate())?;
+        write!(f, ", {}: {}", "delegate", self.delegate())?;
         let extra_count = self.count_extra_fields();
         if extra_count != 0 {
             write!(f, ", .. ({} fields)", extra_count)?;
@@ -316,7 +316,7 @@ impl ComponentDefinitionV1 {
         let end = molecule::unpack_number(&slice[12..]) as usize;
         Byte32::new_unchecked(self.0.slice(start..end))
     }
-    pub fn predicate(&self) -> Script {
+    pub fn delegate(&self) -> Script {
         let slice = self.as_slice();
         let start = molecule::unpack_number(&slice[12..]) as usize;
         if self.has_extra_fields() {
@@ -355,7 +355,7 @@ impl molecule::prelude::Entity for ComponentDefinitionV1 {
         Self::new_builder()
             .component_name(self.component_name())
             .info_hash(self.info_hash())
-            .predicate(self.predicate())
+            .delegate(self.delegate())
     }
 }
 #[derive(Clone, Copy)]
@@ -379,7 +379,7 @@ impl<'r> ::core::fmt::Display for ComponentDefinitionV1Reader<'r> {
         write!(f, "{} {{ ", Self::NAME)?;
         write!(f, "{}: {}", "component_name", self.component_name())?;
         write!(f, ", {}: {}", "info_hash", self.info_hash())?;
-        write!(f, ", {}: {}", "predicate", self.predicate())?;
+        write!(f, ", {}: {}", "delegate", self.delegate())?;
         let extra_count = self.count_extra_fields();
         if extra_count != 0 {
             write!(f, ", .. ({} fields)", extra_count)?;
@@ -417,7 +417,7 @@ impl<'r> ComponentDefinitionV1Reader<'r> {
         let end = molecule::unpack_number(&slice[12..]) as usize;
         Byte32Reader::new_unchecked(&self.as_slice()[start..end])
     }
-    pub fn predicate(&self) -> ScriptReader<'r> {
+    pub fn delegate(&self) -> ScriptReader<'r> {
         let slice = self.as_slice();
         let start = molecule::unpack_number(&slice[12..]) as usize;
         if self.has_extra_fields() {
@@ -484,7 +484,7 @@ impl<'r> molecule::prelude::Reader<'r> for ComponentDefinitionV1Reader<'r> {
 pub struct ComponentDefinitionV1Builder {
     pub(crate) component_name: String,
     pub(crate) info_hash: Byte32,
-    pub(crate) predicate: Script,
+    pub(crate) delegate: Script,
 }
 impl ComponentDefinitionV1Builder {
     pub const FIELD_COUNT: usize = 3;
@@ -496,8 +496,8 @@ impl ComponentDefinitionV1Builder {
         self.info_hash = v;
         self
     }
-    pub fn predicate(mut self, v: Script) -> Self {
-        self.predicate = v;
+    pub fn delegate(mut self, v: Script) -> Self {
+        self.delegate = v;
         self
     }
 }
@@ -508,7 +508,7 @@ impl molecule::prelude::Builder for ComponentDefinitionV1Builder {
         molecule::NUMBER_SIZE * (Self::FIELD_COUNT + 1)
             + self.component_name.as_slice().len()
             + self.info_hash.as_slice().len()
-            + self.predicate.as_slice().len()
+            + self.delegate.as_slice().len()
     }
     fn write<W: molecule::io::Write>(&self, writer: &mut W) -> molecule::io::Result<()> {
         let mut total_size = molecule::NUMBER_SIZE * (Self::FIELD_COUNT + 1);
@@ -518,14 +518,14 @@ impl molecule::prelude::Builder for ComponentDefinitionV1Builder {
         offsets.push(total_size);
         total_size += self.info_hash.as_slice().len();
         offsets.push(total_size);
-        total_size += self.predicate.as_slice().len();
+        total_size += self.delegate.as_slice().len();
         writer.write_all(&molecule::pack_number(total_size as molecule::Number))?;
         for offset in offsets.into_iter() {
             writer.write_all(&molecule::pack_number(offset as molecule::Number))?;
         }
         writer.write_all(self.component_name.as_slice())?;
         writer.write_all(self.info_hash.as_slice())?;
-        writer.write_all(self.predicate.as_slice())?;
+        writer.write_all(self.delegate.as_slice())?;
         Ok(())
     }
     fn build(&self) -> Self::Entity {

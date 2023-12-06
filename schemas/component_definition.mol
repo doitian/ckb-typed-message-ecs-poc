@@ -9,7 +9,7 @@ table ComponentDefinitionV1 {
     info_hash: Byte32,
 
     // The component custom logic
-    predicate: Script,
+    delegate: Script,
 }
 
 union ComponentDefinition {

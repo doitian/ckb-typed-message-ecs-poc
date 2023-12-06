@@ -2,7 +2,7 @@ SCHEMAS_OUT := $(patsubst %.mol,crates/ckb-ecs-schemas/src/%.rs,$(wildcard schem
 
 test: unit-test contracts-test
 
-unit-test:
+unit-test: ${SCHEMAS_OUT}
 	cargo test
 
 contracts-test: build
