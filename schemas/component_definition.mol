@@ -1,0 +1,17 @@
+import blockchain;
+
+vector String <byte>;
+
+table ComponentDefinitionV1 {
+    // The key to lookup the component value schema in DappInfo.schema
+    component_name: String,
+    // hash of DappInfo
+    info_hash: Byte32,
+
+    // The component custom logic
+    predicate: Script,
+}
+
+union ComponentDefinition {
+    ComponentDefinitionV1,
+}
