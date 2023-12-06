@@ -1,9 +1,16 @@
 use blake2b_rs::{Blake2b, Blake2bBuilder};
-use ckb_testtool::ckb_types::bytes::Bytes;
+use ckb_testtool::{
+    ckb_error::Error as CKBError,
+    ckb_jsonrpc_types,
+    ckb_types::{bytes::Bytes, core::TransactionView},
+    context::Context,
+};
 use std::env;
 use std::fs;
 use std::path::PathBuf;
 use std::str::FromStr;
+
+const MAX_CYCLES: u64 = 10_000_000;
 
 #[cfg(test)]
 mod component_definition_type_tests;
@@ -75,4 +82,36 @@ pub fn new_blake2b() -> Blake2b {
     Blake2bBuilder::new(32)
         .personal(CKB_PERSONALIZATION)
         .build()
+}
+
+pub fn dump_tx(tx: &TransactionView) {
+    let json: ckb_jsonrpc_types::TransactionView = tx.clone().into();
+    println!("{}", serde_json::to_string(&json).unwrap());
+}
+
+pub fn verify_tx(context: &mut Context, tx: TransactionView) -> Result<u64, CKBError> {
+    let tx = context.complete_tx(tx);
+    context.verify_tx(&tx, MAX_CYCLES)
+}
+
+pub fn assert_tx_ok(context: &mut Context, tx: TransactionView, msg: &str) {
+    if let Err(err) = verify_tx(context, tx) {
+        panic!("expect {} ok but got err: {}", msg, err);
+    }
+}
+
+pub fn assert_tx_err(context: &mut Context, tx: TransactionView, msg: &str, err_code: i8) {
+    match verify_tx(context, tx) {
+        Ok(_) => panic!("expect {} with err code {} but got ok", msg, err_code),
+        Err(err) => {
+            assert!(
+                err.to_string()
+                    .contains(format!("error code {} ", err_code).as_str()),
+                "expect {} with err code {} but got: {}",
+                msg,
+                err_code,
+                err
+            )
+        }
+    }
 }
