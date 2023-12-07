@@ -6,16 +6,21 @@ use core::result::Result;
 use ckb_std::{
     ckb_constants::Source,
     ckb_types::prelude::*,
+    debug,
     error::SysError,
-    high_level::{load_cell_capacity, load_cell_type, load_input, load_script, QueryIter},
+    high_level::{
+        load_cell_capacity, load_cell_data, load_cell_type, load_input, load_script, QueryIter,
+    },
 };
 
 use blake2b_rs::{Blake2b, Blake2bBuilder};
+use ckb_ecs_schemas::ComponentDefinitionReader;
 
 use crate::error::Error;
 
 pub fn main() -> Result<(), Error> {
-    verify_type_id()
+    verify_type_id()?;
+    verify_component_definition()
 }
 
 // https://github.com/nervosnetwork/ckb/blob/develop/script/src/type_id.rs
@@ -64,6 +69,21 @@ pub fn verify_type_id() -> Result<(), Error> {
     }
 
     Ok(())
+}
+
+pub fn verify_component_definition() -> Result<(), Error> {
+    // There's at most one output
+    match load_cell_data(0, Source::GroupOutput) {
+        Ok(data) => match ComponentDefinitionReader::from_slice(data.as_slice()) {
+            Ok(_) => Ok(()),
+            Err(err) => {
+                debug!("ComponentDefinition verfication error: {}", err);
+                Err(Error::InvalidData)
+            }
+        },
+        Err(SysError::IndexOutOfBound) => Ok(()),
+        Err(err) => Err(err.into()),
+    }
 }
 
 pub fn cell_exists(index: usize, source: Source) -> Result<bool, Error> {

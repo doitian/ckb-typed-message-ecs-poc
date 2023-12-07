@@ -9,4 +9,5 @@ pub enum Error {
     ErrorArgs,
     TooManyCells,
     InvalidInputHash,
+    InvalidData,
 }

@@ -180,6 +180,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "ckb-ecs-schemas"
+version = "0.1.0"
+dependencies = [
+ "molecule",
+]
+
+[[package]]
 name = "ckb-error"
 version = "0.111.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1176,7 +1183,9 @@ name = "tests"
 version = "0.1.0"
 dependencies = [
  "blake2b-rs",
+ "ckb-ecs-schemas",
  "ckb-testtool",
+ "molecule",
  "serde_json",
 ]
 

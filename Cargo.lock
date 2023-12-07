@@ -80,6 +80,7 @@ name = "component-definition-type"
 version = "0.1.0"
 dependencies = [
  "blake2b-rs",
+ "ckb-ecs-schemas",
  "ckb-std",
 ]
 
