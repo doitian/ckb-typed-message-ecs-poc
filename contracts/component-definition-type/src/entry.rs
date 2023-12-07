@@ -31,7 +31,7 @@ pub fn verify_type_id() -> Result<(), Error> {
     // which is the hash of all inputs when creating
     // the cell.
     if script.args().len() != 32 {
-        return Err(Error::ErrorArgs);
+        return Err(Error::InvalidArgs);
     }
 
     if cell_exists(1, Source::GroupInput)? || cell_exists(1, Source::GroupOutput)? {
@@ -64,7 +64,7 @@ pub fn verify_type_id() -> Result<(), Error> {
         blake2b.finalize(&mut ret);
 
         if ret[..] != script.args().raw_data()[..] {
-            return Err(Error::InvalidInputHash);
+            return Err(Error::InvalidTypeID);
         }
     }
 

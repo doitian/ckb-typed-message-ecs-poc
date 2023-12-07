@@ -1,42 +1,47 @@
 // Import from `core` instead of from `std` since we are in no-std mode
 use core::result::Result;
 
-// Import heap related library from `alloc`
-// https://doc.rust-lang.org/alloc/index.html
-use alloc::{vec, vec::Vec};
-
 // Import CKB syscalls and structures
 // https://docs.rs/ckb-std/
 use ckb_std::{
-    ckb_types::{bytes::Bytes, prelude::*},
-    debug,
-    high_level::{load_script, load_tx_hash},
+    ckb_types::{bytes::Bytes, core::ScriptHashType, prelude::*},
+    error::SysError,
+    high_level::{load_script, look_for_dep_with_hash2},
 };
 
 use crate::error::Error;
 
-pub fn main() -> Result<(), Error> {
-    // remove below examples and write your code here
+const ARGS_LEN: usize = 33;
+const CODE_HASH_LEN: usize = 32;
+const SCRIPT_HASH_TYPE_POS: usize = 32;
 
-    let script = load_script()?;
-    let args: Bytes = script.args().unpack();
-    debug!("script args is {:?}", args);
-
-    // return an error if args is invalid
-    if args.is_empty() {
-        return Err(Error::MyError);
+// Only need to differentiate type and data, no mather which vm version for data.
+fn type_or_data(byte: u8) -> ScriptHashType {
+    if byte == ScriptHashType::Type as u8 {
+        ScriptHashType::Type
+    } else {
+        ScriptHashType::Data
     }
-
-    let tx_hash = load_tx_hash()?;
-    debug!("tx hash is {:?}", tx_hash);
-
-    let _buf: Vec<_> = vec![0u8; 32];
-
-    Ok(())
 }
 
-// Unit tests are supported.
-#[test]
-fn test_foo() {
-    assert!(true);
+pub fn main() -> Result<(), Error> {
+    let script = load_script()?;
+    let args: Bytes = script.args().unpack();
+
+    if args.len() < ARGS_LEN {
+        return Err(Error::InvalidArgs);
+    }
+
+    match look_for_dep_with_hash2(
+        &args[0..CODE_HASH_LEN],
+        type_or_data(args[SCRIPT_HASH_TYPE_POS]),
+    ) {
+        Ok(index) => exec_dep_cell(index),
+        Err(SysError::IndexOutOfBound) => Err(Error::ComponentDefinitionNotFound),
+        Err(err) => Err(err.into()),
+    }
+}
+
+fn exec_dep_cell(_: usize) -> Result<(), Error> {
+    Ok(())
 }

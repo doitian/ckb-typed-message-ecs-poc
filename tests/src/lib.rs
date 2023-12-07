@@ -16,6 +16,8 @@ const MAX_CYCLES: u64 = 10_000_000;
 mod component_definition_type_tests;
 #[cfg(test)]
 mod component_lock_tests;
+#[cfg(test)]
+mod component_type_tests;
 
 const TEST_ENV_VAR: &str = "CAPSULE_TEST_ENV";
 
@@ -82,6 +84,15 @@ pub fn new_blake2b() -> Blake2b {
     Blake2bBuilder::new(32)
         .personal(CKB_PERSONALIZATION)
         .build()
+}
+
+pub fn ckb_hash(data: &[u8]) -> Vec<u8> {
+    let mut blake2b = new_blake2b();
+
+    blake2b.update(data);
+    let mut ret = vec![0; 32];
+    blake2b.finalize(&mut ret);
+    ret
 }
 
 pub fn dump_tx(tx: &TransactionView) {

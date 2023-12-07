@@ -1,8 +1,11 @@
 mod blockchain;
+mod component;
 mod component_definition;
 
 #[allow(clippy::all)]
 pub use blockchain::*;
+#[allow(clippy::all)]
+pub use component::*;
 #[allow(clippy::all)]
 pub use component_definition::*;
 

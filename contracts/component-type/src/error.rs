@@ -1,15 +1,6 @@
 use ckb_std::error::SysError;
 
-/// Error
-#[repr(i8)]
-pub enum Error {
-    IndexOutOfBound = 1,
-    ItemMissing,
-    LengthNotEnough,
-    Encoding,
-    // Add customized errors here...
-    MyError,
-}
+include!("error_include.rs");
 
 impl From<SysError> for Error {
     fn from(err: SysError) -> Self {

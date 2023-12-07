@@ -7,7 +7,5 @@ pub enum Error {
     Encoding,
     // Add customized errors here...
     InvalidArgs,
-    TooManyCells,
-    InvalidTypeID,
-    InvalidData,
+    ComponentDefinitionNotFound,
 }

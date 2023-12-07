@@ -1,0 +1,6 @@
+import blockchain;
+
+struct ComponentArgs {
+    code_hash:      Byte32,
+    hash_type:      byte,
+}
