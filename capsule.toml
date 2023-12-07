@@ -19,3 +19,7 @@ template_type = "Rust"
 [[contracts]]
 name = "component-definition-type"
 template_type = "Rust"
+
+[[contracts]]
+name = "component-type"
+template_type = "Rust"

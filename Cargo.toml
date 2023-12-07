@@ -3,7 +3,7 @@ members = [
   "crates/ckb-ecs-schemas",
   "contracts/component-lock",
   "contracts/always-success",
-  "contracts/component-definition-type",
+  "contracts/component-definition-type", "contracts/component-type",
 ]
 exclude = ["tests"]
 
