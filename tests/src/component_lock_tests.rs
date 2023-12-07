@@ -103,7 +103,7 @@ fn test_component_lock_insufficient_balance() {
         .output_data(Bytes::new().pack())
         .build();
 
-    assert_tx_err(
+    assert_tx_err_code(
         env.c(),
         tx,
         "insufficient balance",
@@ -145,7 +145,7 @@ fn test_transfer_to_owner_with_insufficient_balance() {
         .output(env.output(env.alice_owner_lock_script.clone(), 300u64))
         .output_data(Bytes::new().pack())
         .build();
-    assert_tx_err(
+    assert_tx_err_code(
         env.c(),
         tx,
         "insufficent balance",
@@ -179,7 +179,7 @@ fn test_transfer_to_owner_with_insufficient_balance_in_multiple_cells() {
         .outputs_data(vec![Bytes::new(); 2].pack())
         .build();
 
-    assert_tx_err(
+    assert_tx_err_code(
         env.c(),
         tx,
         "insufficent balance",

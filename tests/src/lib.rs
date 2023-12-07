@@ -111,16 +111,25 @@ pub fn assert_tx_ok(context: &mut Context, tx: TransactionView, msg: &str) {
     }
 }
 
-pub fn assert_tx_err(context: &mut Context, tx: TransactionView, msg: &str, err_code: i8) {
+pub fn assert_tx_err_code(context: &mut Context, tx: TransactionView, msg: &str, err_code: i8) {
+    let err_message = format!("error code {} ", err_code);
+    assert_tx_err_message(context, tx, msg, err_message.as_str())
+}
+
+pub fn assert_tx_err_message(
+    context: &mut Context,
+    tx: TransactionView,
+    msg: &str,
+    err_message: &str,
+) {
     match verify_tx(context, tx) {
-        Ok(_) => panic!("expect {} with err code {} but got ok", msg, err_code),
+        Ok(_) => panic!("expect {} with err {} but got ok", msg, err_message),
         Err(err) => {
             assert!(
-                err.to_string()
-                    .contains(format!("error code {} ", err_code).as_str()),
+                err.to_string().contains(err_message),
                 "expect {} with err code {} but got: {}",
                 msg,
-                err_code,
+                err_message,
                 err
             )
         }

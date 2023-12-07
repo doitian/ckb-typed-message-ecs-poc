@@ -104,7 +104,7 @@ fn test_invalid_args_len() {
         .output_data(Bytes::new().pack())
         .build();
 
-    assert_tx_err(env.c(), tx, "invalid args", Error::InvalidArgs as i8);
+    assert_tx_err_code(env.c(), tx, "invalid args", Error::InvalidArgs as i8);
 }
 
 #[test]
@@ -117,7 +117,7 @@ fn test_component_definition_not_found() {
         .output_data(Bytes::new().pack())
         .build();
 
-    assert_tx_err(
+    assert_tx_err_code(
         env.c(),
         tx,
         "invalid args",
@@ -175,4 +175,43 @@ fn test_component_definition_found_by_type_hash() {
         .build();
 
     assert_tx_ok(env.c(), tx, "found by type hash");
+}
+
+#[test]
+fn test_component_definition_delegate_err() {
+    let mut env = Setup::new();
+
+    // Create an invalid script cell
+    let delegate_script_cell_out_point = env.context.deploy_cell(Bytes::from(vec![0u8]));
+
+    // Use component type it self as delegate, it will fail because of invalid args len
+    let delegate = env
+        .context
+        .build_script(&delegate_script_cell_out_point, Bytes::new())
+        .expect("script");
+    let definition = create_definition(delegate);
+    let definition_cell = env.definition_cell(&definition, None);
+
+    let mut args = ckb_hash(definition.as_slice());
+    args.push(0);
+
+    let tx = TransactionBuilder::default()
+        .input(env.input())
+        .output(env.output(Bytes::from(args)))
+        .output_data(Bytes::new().pack())
+        .cell_dep(
+            packed::CellDepBuilder::default()
+                .out_point(definition_cell)
+                .dep_type(0u8.into())
+                .build(),
+        )
+        .cell_dep(
+            packed::CellDepBuilder::default()
+                .out_point(delegate_script_cell_out_point)
+                .dep_type(0u8.into())
+                .build(),
+        )
+        .build();
+
+    assert_tx_err_message(env.c(), tx, "delegate err", "VM Internal Error");
 }

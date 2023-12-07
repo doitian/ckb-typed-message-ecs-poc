@@ -156,7 +156,7 @@ fn test_invalid_data() {
         .output(env.output(Some(new_id)))
         .output_data(data.pack())
         .build();
-    assert_tx_err(
+    assert_tx_err_code(
         env.c(),
         tx,
         "create cell with invalid data",

@@ -8,4 +8,5 @@ pub enum Error {
     // Add customized errors here...
     InvalidArgs,
     ComponentDefinitionNotFound,
+    InvalidComponentDefinition,
 }
